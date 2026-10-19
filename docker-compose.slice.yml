@@ -1,0 +1,35 @@
+# 仅用于第一切片：PostgreSQL + 容器内 Go 测试。不包含 Kafka/前端/Agent。
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: coderisk-pg
+    environment:
+      POSTGRES_USER: coderisk
+      POSTGRES_PASSWORD: coderisk
+      POSTGRES_DB: coderisk
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U coderisk -d coderisk"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+    networks:
+      - coderisk-slice
+
+  backend-test:
+    image: golang:1.24.6
+    working_dir: /src
+    volumes:
+      - ./backend:/src
+    environment:
+      DATABASE_URL: postgres://coderisk:coderisk@postgres:5432/coderisk?sslmode=disable
+      GOPROXY: https://proxy.golang.org,direct
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["go", "test", "-count=1", "./..."]
+    networks:
+      - coderisk-slice
+
+networks:
+  coderisk-slice:
+    name: coderisk-slice
