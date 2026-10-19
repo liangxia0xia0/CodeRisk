@@ -1,0 +1,38 @@
+# Secrets and local env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+
+# Go
+backend/bin/
+backend/dist/
+*.exe
+*.test
+*.out
+vendor/
+
+# Python / Node (future)
+__pycache__/
+.venv/
+venv/
+node_modules/
+dist/
+build/
+.coverage
+coverage/
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Local data / Docker volumes
+*.log
+.tmp/
+data/
+postgres-data/
